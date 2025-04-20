@@ -1,95 +1,81 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+
+import '@fontsource/special-gothic-expanded-one';
+import '../../src/app/styles/style.css';
+import { useRouter } from 'next/navigation';
+
+import { Box, Typography } from "@mui/material";
 
 export default function Home() {
+  const router = useRouter();
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <Box>
+      <Box
+        display="flex"
+        justifyContent="flex-start"
+        alignItems="center"
+        gap={2}
+        sx={{
+          py: 5,
+          background: "linear-gradient(135deg, #5cceee 0%, #24c0eb 100%)",
+          m: 0,
+          border: 0,
+          width: '100vw',
+        }}
+      >
+        <Box display={"flex"} width={"80%"}>
+          <Typography
+            marginLeft={4}
+            bgcolor="white"
+            fontSize={20}
+            sx={{
+              fontFamily: '"Special Gothic Expanded One", sans-serif',
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              borderRadius: 2,
+              padding: 2,
+            }}
+          >
+            Okay, Where and When?
+          </Typography>
+        </Box>
+        <Box display={"flex"} marginLeft={20} gap={2} width={"30%"}>
+          <Typography
+            onClick={() => router.push('/signup')}
+            bgcolor="white"
+            fontSize={20}
+            sx={{
+              fontWeight: 0,
+              fontFamily: '"Special Gothic Expanded One", sans-serif',
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              borderRadius: 2,
+              '&:hover': {
+                cursor: 'pointer',
+                boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)", // efeito ao passar o mouse
+              },
+              padding: 2,
+            }}
+          >
+            Register/Login
+          </Typography>
+          <Typography
+            bgcolor="white"
+            fontSize={20}
+            sx={{
+              fontFamily: '"Special Gothic Expanded One", sans-serif',
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              borderRadius: 2,
+              padding: 2,
+            }}
+          >
+            Registro/Login
+          </Typography>
+        </Box>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+
+
+      </Box>
+    </Box>
   );
 }
