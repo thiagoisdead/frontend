@@ -51,27 +51,27 @@ const StyledWrapper = styled.div`
 
   .Btn:hover {
     background-color: black;
-    width: 125px;
-    border-radius: 40px;
-    transition-duration: 0.3s;
+    // width: 125px;
+    // border-radius: 40px;
+    // transition-duration: 0.3s;
   }
 
-  .Btn:hover .sign {
-    width: 30%;
-    transition-duration: 0.3s;
-    padding-left: 20px;
-  }
+  // .Btn:hover .sign {
+  //   width: 30%;
+  //   transition-duration: 0.3s;
+  //   padding-left: 20px;
+  // }
 
   .Btn:hover .sign svg path {
     fill: white;
   }
 
-  .Btn:hover .text {
-    opacity: 1;
-    width: 70%;
-    transition-duration: 0.3s;
-    padding-right: 10px;
-  }
+  // .Btn:hover .text {
+  //   opacity: 1;
+  //   width: 70%;
+  //   transition-duration: 0.3s;
+  //   padding-right: 10px;
+  // }
 
   .Btn:active {
     transform: translate(2px, 2px);
@@ -89,6 +89,7 @@ export default function LogoutButton() {
         onClick={() => {
           localStorage.removeItem('token');
           router.push('/')
+          window.location.reload();
         }}
       >
         <div className="sign">
