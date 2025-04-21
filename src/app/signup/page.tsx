@@ -14,7 +14,8 @@ const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), { ssr: false }
 
 export default function Home() {
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  const [name, setName] = useState<string>('');
+  const [nickname, setNickname] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [registerOrLogin, setRegisterOrLogin] = useState('register');
   const [password, setPassword] = useState('');
@@ -40,7 +41,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: name, email: email, password: password, captchaToken: captchaToken })
+        body: JSON.stringify({ nickname: nickname, name: name, email: email, password: password, captchaToken: captchaToken })
       });
       if (res.ok) {
         const data = await res.json();  // Transforma a resposta em JSON
@@ -154,18 +155,28 @@ export default function Home() {
               </Box>
             </Box>
             {registerOrLogin === 'register' && (
-              <Box display={"flex"} justifyContent={"center"}>
-                <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
-                  <FormControl fullWidth>
-                    <TextField type='name' name='name' id='name' label={"Digite o Nome"} onChange={(e) => setName(e.target.value)}></TextField>
-                  </FormControl>
+              <>
+                <Box display={"flex"} justifyContent={"center"}>
+                  <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
+                    <FormControl fullWidth>
+                      <TextField type='text' name='nickname' required id='nickname' label={"Digite o nome de usuário"} onChange={(e) => setNickname(e.target.value)}></TextField>
+                    </FormControl>
+                  </Box>
                 </Box>
-              </Box>
+                <Box display={"flex"} justifyContent={"center"}>
+                  <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
+                    <FormControl fullWidth>
+                      <TextField type='name' name='name' required id='name' label={"Digite o Nome"} onChange={(e) => setName(e.target.value)}></TextField>
+                    </FormControl>
+                  </Box>
+                </Box>
+              </>
+
             )}
             <Box display={"flex"} justifyContent={"center"}>
               <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                 <FormControl fullWidth>
-                  <TextField type='email' name='email' id='email' label={"Digite o email"} onChange={(e) => setEmail(e.target.value)}>
+                  <TextField type='email' name='email' required id='email' label={"Digite o email"} onChange={(e) => setEmail(e.target.value)}>
                   </TextField>
                 </FormControl>
               </Box>
@@ -173,7 +184,7 @@ export default function Home() {
             <Box display={"flex"} justifyContent={"center"}>
               <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                 <FormControl fullWidth>
-                  <TextField type='password' name='password' id='password' label={"Password"} onChange={(e) => setPassword(e.target.value)}
+                  <TextField type='password' name='password' required id='password' label={"Password"} onChange={(e) => setPassword(e.target.value)}
                   >
                   </TextField>
                 </FormControl>
@@ -189,7 +200,7 @@ export default function Home() {
             </Box>
             <Box display="flex" justifyContent="center">
               <Box sx={{ width: '80%', mt: 5 }}>
-                <Button type='submit' disabled={loading}>oiii</Button>
+                <Button type='submit' variant='contained' disabled={loading}>Enviar</Button>
               </Box>
             </Box>
           </Box>
