@@ -8,7 +8,9 @@ const StyledWrapper = styled.div`
   .Btn {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    align-self: center;
+    align-content? center;
+    justify-content: flex-end;
     width: 45px;
     height: 45px;
     border: none;
@@ -19,6 +21,7 @@ const StyledWrapper = styled.div`
     transition-duration: 0.3s;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
     background-color: white;
+    padding: 2;
   }
 
   .sign {
@@ -83,8 +86,8 @@ export default function LogoutButton() {
   const router = useRouter();
 
   return (
-    <StyledWrapper>
-      <button
+    <StyledWrapper >
+      <button 
         className="Btn"
         onClick={() => {
           localStorage.removeItem('token');
