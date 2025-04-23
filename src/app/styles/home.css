@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    max-width: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+input:-webkit-autofill {
+    transition: background-color 100000s ease-in-out 0s;
+    -webkit-text-fill-color: #000 !important;
+}
+
+:root {
+    --font-mulish: 'Mulish', sans-serif;
+}
+
+.bgSvg {
+    background-image: url('/images/bg.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* ou 'contain' se quiser mostrar tudo */
+    background-position: center;
+}
+
+.bg2Svg {
+    background-image: url('/images/sideBg.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* ou 'contain' se quiser mostrar tudo */
+    background-position: center;
+}
