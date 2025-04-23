@@ -1,13 +1,16 @@
 'use client'
 
 import '@fontsource/special-gothic-expanded-one';
-import '../../src/app/styles/style.css';
+import '../../src/app/styles/home.css';
 import { useRouter } from 'next/navigation';
 
 import { Box, Typography, Grid } from "@mui/material";
 import { useEffect, useState } from 'react';
 // app/page.tsx
 import LogoutButton from '../components/LogoutButton'; // ou o caminho relativo correto
+import AnimatedIntro from '../components/firstText'; // ou o caminho relativo correto
+
+import Image from 'next/image';
 
 interface User {
   name: string;
@@ -40,8 +43,7 @@ export default function Home() {
         }
 
         const data = await response.json();
-        console.log(data)
-        setAuthenticated(true)
+        setAuthenticated(true);
         setUser(data);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -54,64 +56,87 @@ export default function Home() {
   }, []);
 
   return (
-    <Box>
-
-      <Grid container spacing={2} sx={{
-        width: '100vw', maxWidth: '100vw', px: 5, height: '15vh', m: 0, background: "linear-gradient(135deg, #5cceee 0%, #24c0eb 100%)", display: 'flex', alignItems: "center"
+    <Box width={'100%'}>
+      <Grid container sx={{
+        width: '100%',
+        maxWidth: '100%',
+        px: 5,
+        height: '9vh',
+        m: 0,
+        background: "#f9f9f9",
+        alignItems: "center"
       }}>
-        <Grid size={{ md: 10.6 }}>
-          <Box sx={{ width: 'auto', display: 'inline-block' }}>
-            <Typography
-              bgcolor="white"
-              fontSize={20}
-              sx={{
-                fontFamily: '"Special Gothic Expanded One", sans-serif',
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                borderRadius: 2,
-                padding: 2,
-                whiteSpace: 'nowrap', // Evitar que o texto quebre
-                overflow: 'hidden', // Impedir que ultrapasse o limite
-                textOverflow: 'ellipsis', // Colocar "..." se o texto for muito longo
+        <Grid size={{ md: 4 }}>
+          <Box sx={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start'
+          }}>
+            <Image
+              alt="logo"
+              src="/images/haha.png"
+              width={'120'}
+              height={'40'}
+              style={{
+                fill: 'black',
+                maxHeight: "100%",
+                maxWidth: "100%",
+                display: "block",
               }}
-            >
-              Okay, Where and When?
-            </Typography>
+            />
           </Box>
         </Grid>
 
-        {autenthicated === false && (
-          <Grid size={{ md: 1.4 }}>
-            <Box sx={{ width: 'auto', display: 'inline-block' }}>
+        <Grid size={{ md: 4 }}>
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            {/* <Typography
+              fontSize={30}
+              sx={{
+                fontFamily: '"Special Gothic Expanded One", sans-serif',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                textAlign: 'center',
+              }}
+            >
+              Okay, Where and When?
+            </Typography> */}
+          </Box>
+        </Grid>
+
+        <Grid size={{ md: 4 }}>
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2 }}>
+            {!autenthicated ? (
               <Typography
                 onClick={() => router.push('/signup')}
-                bgcolor="white"
+                // bgcolor="#ff3259"
                 fontSize={20}
                 sx={{
-                  fontFamily: '"Special Gothic Expanded One", sans-serif',
+                  // color: 'white',
+                  fontFamily: 'var(--font-mulish)',
                   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                  borderRadius: 2,
+                  borderRadius: 10,
                   '&:hover': {
                     cursor: 'pointer',
-                    boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)", // efeito ao passar o mouse
+                    boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)",
                   },
                   padding: 2,
+                  textAlign: 'center',
                 }}
               >
-                Register/Login
+                Login/Registro
               </Typography>
-            </Box>
-          </Grid>)}
-        {autenthicated === true && (
-          <>
-            <Grid size={{ md: 0.9 }}>
-              <Box sx={{ width: 'auto', display: 'inline-block' }}>
+            ) : (
+              <>
                 <Typography
-                  // onClick={() => router.push('/signup')}
+                  onClick={() => router.push('/events')}
                   bgcolor="white"
                   fontSize={20}
                   sx={{
                     fontWeight: 0,
-                    fontFamily: '"Special Gothic Expanded One", sans-serif',
+                    fontFamily: 'var(--font-mulish)',
                     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
                     borderRadius: 2,
                     '&:hover': {
@@ -119,22 +144,43 @@ export default function Home() {
                       boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)",
                     },
                     padding: 2,
+                    textAlign: 'center',
+                  }}
+                >
+                  Eventos
+                </Typography>
+
+                <Typography
+                  bgcolor="white"
+                  fontSize={20}
+                  sx={{
+                    fontWeight: 0,
+                    fontFamily: 'var(--font-mulish)',
+                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                    // border: '1px outset black',
+                    borderRadius: 2,
+                    '&:hover': {
+                      cursor: 'pointer',
+                      boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.15)",
+                    },
+                    padding: 2,
+                    textAlign: 'center',
                   }}
                 >
                   {user?.name}
                 </Typography>
-              </Box>
-            </Grid>
-            <Grid size={{ md: 0.5 }}>
-              <Box sx={{ width: 'auto', display: 'inline-block' }}>
-                <LogoutButton></LogoutButton>
-              </Box>
-            </Grid>
+                <LogoutButton />
+              </>
+            )}
+          </Box>
+        </Grid>
+      </Grid>
 
-          </>
-        )
-        }
-      </Grid >
-    </Box >
+      <Box sx={{
+        width: 'auto', height: '93.75rem', paddingRight: 5, paddingLeft: 5, paddingTop: 5
+      }} className="bgSvg">
+        <AnimatedIntro />
+      </Box>
+    </Box>
   );
 }
