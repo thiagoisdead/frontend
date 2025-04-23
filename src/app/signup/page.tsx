@@ -4,8 +4,8 @@ import '@fontsource/special-gothic-expanded-one';
 import '@fontsource/roboto';
 import { Box, Button, FormControl, TextField, Typography } from "@mui/material";
 
-import { useState } from 'react';
-import '../styles/style.css'
+import { useEffect, useState } from 'react';
+import '../styles/home.css'
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 
@@ -21,6 +21,13 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      router.push('/')
+    }
+  }, []);
 
 
   const handleCaptcha = (token: string | null) => {
@@ -96,20 +103,23 @@ export default function Home() {
           background: "#f9f9f9",
         }}
         display="flex"
-        justifyContent="flex-end" // <- Aqui está o segredo
+        justifyContent="flex-end" 
       >
+        <Box sx={{ width: '75%', height: 'auto' }} className="bg2Svg">
+
+        </Box>
         <Box
           display={"flex"}
           justifyContent={"flex-start"}
           width="35%"
           height="100%"
-          flexDirection="column" // <- ESSA LINHA!
+          flexDirection="column" 
           sx={{
             bgcolor: '#f9f9f9',
-            borderLeft: '2px solid black'
+            // borderLeft: '2px solid black'
           }}
         >
-          <Box mt={5}>
+          <Box mt={3}>
             <Box display={'flex'} alignItems={"center"} sx={{ width: '100%', mb: 4 }}>
               <Box sx={{ width: '50%', height: '100%', bgcolor: "#f9f9f9" }}>
                 <Typography textAlign={"center"} justifySelf={"center"} justifyItems={"center"}
