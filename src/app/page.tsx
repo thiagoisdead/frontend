@@ -63,7 +63,7 @@ export default function Home() {
         px: 5,
         height: '9vh',
         m: 0,
-        background: "#f9f9f9",
+        background: "#FFFAF0",
         alignItems: "center"
       }}>
         <Grid size={{ md: 4 }}>
