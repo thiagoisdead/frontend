@@ -5,7 +5,7 @@ import { Box, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
 const text1 = "Marcar eventos com seus amigos não era pra ser tão difícil.";
-const text2 = "E não é, com Okay, Where and When?";
+const text2 = "E não é, com Where and When.";
 
 const container = {
   hidden: { opacity: 1 },
