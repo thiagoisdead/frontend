@@ -2,7 +2,8 @@
 
 import '@fontsource/special-gothic-expanded-one';
 import '@fontsource/roboto';
-import { Box, Button, FormControl, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, Tab, Tabs, TextField, Typography, InputAdornment, IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { useEffect, useState } from 'react';
 import '../styles/home.css'
@@ -20,7 +21,12 @@ export default function Home() {
   const [registerOrLogin, setRegisterOrLogin] = useState('register');
   const [password, setPassword] = useState('');
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -103,7 +109,7 @@ export default function Home() {
           background: "#f9f9f9",
         }}
         display="flex"
-        justifyContent="flex-end" 
+        justifyContent="flex-end"
       >
         <Box sx={{ width: '75%', height: 'auto' }} className="bg2Svg">
 
@@ -113,55 +119,44 @@ export default function Home() {
           justifyContent={"flex-start"}
           width="35%"
           height="100%"
-          flexDirection="column" 
+          flexDirection="column"
           sx={{
             bgcolor: '#f9f9f9',
-            // borderLeft: '2px solid black'
           }}
         >
           <Box mt={3}>
             <Box display={'flex'} alignItems={"center"} sx={{ width: '100%', mb: 4 }}>
-              <Box sx={{ width: '50%', height: '100%', bgcolor: "#f9f9f9" }}>
-                <Typography textAlign={"center"} justifySelf={"center"} justifyItems={"center"}
-                  fontSize={40}
-                  onClick={() => {
-                    if (registerOrLogin === 'register') {
-                      return;
-                    }
-                    else {
-                      setRegisterOrLogin('register');
-                    }
-                  }}
-                  sx={{
-                    fontFamily: 'Roboto',
-                    padding: 2,
-                    color: 'black',
-                    cursor: 'pointer',
-                    borderBottom: registerOrLogin === 'register' ? '2px solid black' : 'none',
-                  }}>
-                  Register
-                </Typography>
-              </Box>
-              <Box sx={{ width: '40%', height: '100%', bgcolor: "#f9f9f9" }}>
-                <Typography textAlign={"center"} justifyItems={"center"}
-                  fontSize={40}
-                  onClick={() => {
-                    if (registerOrLogin === 'login') {
-                      return;
-                    }
-                    else {
-                      setRegisterOrLogin('login');
-                    }
-                  }}
-                  sx={{
-                    fontFamily: 'Roboto',
-                    padding: 2,
-                    color: 'black',
-                    cursor: 'pointer',
-                    borderBottom: registerOrLogin === 'login' ? '2px solid black' : 'none',
-                  }}>
-                  Login
-                </Typography>
+              <Box sx={{ width: '100%' }}>
+                <Tabs
+                  value={registerOrLogin}
+                  onChange={(event, newValue) => setRegisterOrLogin(newValue)}
+                  sx={{ width: '100%', display: 'flex' }}
+                >
+                  <Tab
+                    value="register"
+                    label="Registro"
+                    sx={{
+                      flex: 1,
+                      color: 'black',
+                      fontFamily: 'Roboto',
+                      textTransform: 'none',
+                      fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem', lg: '2.5rem' },
+                      cursor: 'pointer',
+                    }}
+                  />
+                  <Tab
+                    value="login"
+                    label="Login"
+                    sx={{
+                      flex: 1, textTransform: 'none',
+                      fontFamily: 'Roboto',
+                      color: 'black',
+                      fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem', lg: '2.5rem' },
+                      cursor: 'pointer',
+
+                    }}
+                  />
+                </Tabs>
               </Box>
             </Box>
             {registerOrLogin === 'register' && (
@@ -169,7 +164,7 @@ export default function Home() {
                 <Box display={"flex"} justifyContent={"center"}>
                   <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                     <FormControl fullWidth>
-                      <TextField type='text' name='nickname' required id='nickname' label={"Digite o nome de usuário"} onChange={(e) => setNickname(e.target.value)}></TextField>
+                      <TextField autoFocus type='text' name='nickname' required id='nickname' label={"Digite o nome de usuário"} onChange={(e) => setNickname(e.target.value)}></TextField>
                     </FormControl>
                   </Box>
                 </Box>
@@ -186,7 +181,7 @@ export default function Home() {
             <Box display={"flex"} justifyContent={"center"}>
               <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                 <FormControl fullWidth>
-                  <TextField type='email' name='email' required id='email' label={"Digite o email"} onChange={(e) => setEmail(e.target.value)}>
+                  <TextField autoFocus type='email' name='email' required id='email' label={"Digite o email"} onChange={(e) => setEmail(e.target.value)}>
                   </TextField>
                 </FormControl>
               </Box>
@@ -194,9 +189,29 @@ export default function Home() {
             <Box display={"flex"} justifyContent={"center"}>
               <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                 <FormControl fullWidth>
-                  <TextField type='password' name='password' required id='password' label={"Password"} onChange={(e) => setPassword(e.target.value)}
-                  >
-                  </TextField>
+                  <TextField
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    required
+                    id="password"
+                    label="Senha"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            edge="end"
+                            sx={{mr: 0.5}}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 </FormControl>
               </Box>
             </Box>
