@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.2.5",
     "@fontsource/special-gothic-expanded-one": "^5.2.1",
+    "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@mui/system": "^7.0.2",
     "dotenv": "^16.5.0",
