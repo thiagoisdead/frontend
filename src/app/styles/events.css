@@ -17,3 +17,18 @@ input:-webkit-autofill {
     transition: background-color 100000s ease-in-out 0s;
     -webkit-text-fill-color: #000 !important;
 }
+
+.eventsSvg {
+    background-image: url('/images/eventsBg.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* ou 'contain' se quiser mostrar tudo */
+    background-position: center;
+}
+.createEventSvg {
+    background-image: url('/images/createEventBg.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* ou 'contain' se quiser mostrar tudo */
+    background-position: center;
+}
