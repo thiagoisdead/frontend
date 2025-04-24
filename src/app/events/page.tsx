@@ -45,12 +45,12 @@ export default function Home() {
   }, []);
 
   return (
-    <Box width={'100%'} height={'100%'} bgcolor={'red'} display={"flex"} alignItems={"center"} justifyContent={"center"}>
+    <Box width={'100%'} height={'100%'} className="eventsSvg" display={"flex"} alignItems={"center"} justifyContent={"center"}>
       <Box width={'65%'} mt={6} height={'60%'} gap={2} flexDirection={'row'} justifyContent={'space-between'} display={'flex'}>
         <Paper elevation={20} sx={{
           border: '2px ridge black', borderRadius: 5, width: '35%', height: '80%', display: 'flex', justifyContent: 'flex-start', flexDirection: 'column', background: 'linear-gradient(135deg, #f9f9f9 0%, #5cceee 100%)', px: 5, transition: 'transform 0.2s ease-in-out', '&:hover': { transform: 'translateY(-5px)', }, cursor: 'pointer',
         }}
-        onClick={() => router.push('/events/createEvent')}
+          onClick={() => router.push('/events/createEvent')}
         >
           <Typography
             mt={1.5}
