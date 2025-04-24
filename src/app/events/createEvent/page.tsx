@@ -1,7 +1,7 @@
 'use client'
 import { Box, Button, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import '../../styles/home.css'
+import '../../styles/events.css'
 import { Grid } from '@mui/system';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -38,15 +38,16 @@ export default function EventStepper() {
   };
 
   return (
-    <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Box sx={{ position: 'absolute', top: 0, left: 0, p: 5 }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', }} className={"createEventSvg"}>
+      <Box sx={{ position: 'absolute', top: 0, left: 0, p: 4 }}>
         <Image
           alt="logo"
           onClick={() => router.push('/')}
           src="/images/haha.png"
-          width={120} // valor em número, não string
+          width={120} 
           height={40}
           style={{
+            cursor: 'pointer',
             maxHeight: "100%",
             maxWidth: "100%",
             display: "block",
