@@ -1,12 +1,12 @@
 'use client'
-import { Box, Button, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Step, StepButton, StepLabel, Stepper, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import '../../styles/events.css'
 import { Grid } from '@mui/system';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-const steps = ['Nome do evento e Descrição', 'Dias e Horários', 'Quantidade de Pessoas e Localização', 'Contatos e Preços', 'Proibições', 'Adicionais opcionais', 'Finalização'];
+const steps = ['Nome do evento e descrição', 'Dias e Horários', 'Quantidade de Pessoas e Localização', 'Contatos e Preços', 'Proibições', 'Adicionais opcionais', 'Finalização'];
 
 export default function EventStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -21,9 +21,16 @@ export default function EventStepper() {
       case 0:
         return <Typography>Formulário de informações básicas</Typography>;
       case 1:
-        return <Grid container spacing={2}>
-          <TextField type='text' label={'Oii'}></TextField>
-        </Grid>
+        return (
+          <Grid container spacing={2}>
+            <Grid size={{ lg: 12, sm: 12 }}>
+              <TextField type='text' label={'Oii'}></TextField>
+            </Grid>
+            <Grid size={{ lg: 12, sm: 12 }}>
+              <TextField type='text' label={'Oii'}></TextField>
+            </Grid>
+          </Grid>
+        )
       case 2:
         return <Typography>Revise e confirme seu evento</Typography>;
       case 3:
@@ -44,7 +51,7 @@ export default function EventStepper() {
           alt="logo"
           onClick={() => router.push('/')}
           src="/images/haha.png"
-          width={120} 
+          width={120}
           height={40}
           style={{
             cursor: 'pointer',
@@ -54,19 +61,33 @@ export default function EventStepper() {
           }}
         />
       </Box>
-
-      <Box sx={{ width: '70%', height: '65%', bgcolor: 'white', border: '2px solid black', borderRadius: 4, display: 'flex', flexDirection: 'column', boxSizing: 'border-box', p: 2 }}>
-        <Box sx={{ height: '100%', width: '100%' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', widht: '100%', height: '10%', textAlign: 'center' }}>
-            <Typography>{steps[activeStep]}</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'center', widht: '100%', height: '10%', textAlign: 'center' }}>
-            {renderStepContent(activeStep)}
-          </Box>
-          <Box>
-            <Button disabled={activeStep === 0} onClick={handleBack}>
+      <Box
+        sx={{
+          width: '70%',
+          height: '65%',
+          bgcolor: 'white',
+          border: '2px solid black',
+          borderRadius: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          boxSizing: 'border-box',
+          p: 2,
+          justifyContent: 'space-between',
+        }}
+      >
+        <Grid container spacing={2} sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" bgcolor={'red'} width="100%" sx={{ height: 40 }}>
+            <Button
+              disabled={activeStep === 0}
+              onClick={handleBack}
+            >
               Voltar
             </Button>
+
+            <Typography variant="h6" align="center">
+              {steps[activeStep]}
+            </Typography>
+
             <Button
               variant="contained"
               onClick={handleNext}
@@ -75,16 +96,24 @@ export default function EventStepper() {
               Avançar
             </Button>
           </Box>
-          <Box sx={{ bgcolor: 'yellow' }}>
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((label) => (
+          {/* Conteúdo do step */}
+          <Grid size={{ xs: 12 }} display="flex" justifyContent="center" bgcolor={'orange'} alignItems="center">
+            {renderStepContent(activeStep)}
+          </Grid>
+
+          {/* Stepper */}
+          <Grid size={{ xs: 12 }}>
+            <Stepper activeStep={activeStep} alternativeLabel nonLinear>
+              {steps.map((label, index) => (
                 <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
+                  <StepButton onClick={() => setActiveStep(index)}>
+                    {label}
+                  </StepButton>
                 </Step>
               ))}
             </Stepper>
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
       </Box>
     </Box>
   );
