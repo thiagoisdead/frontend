@@ -2,7 +2,7 @@
 
 import '@fontsource/special-gothic-expanded-one';
 import '@fontsource/roboto';
-import { Box, Button, FormControl, Tab, Tabs, TextField, Typography, InputAdornment, IconButton } from "@mui/material";
+import { Box, Button, FormControl, Tab, Tabs, TextField, InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { useEffect, useState } from 'react';
@@ -121,7 +121,7 @@ export default function Home() {
           height="100%"
           flexDirection="column"
           sx={{
-            bgcolor: '#f9f9f9',
+            bgcolor: '#FFFAF0',
           }}
         >
           <Box mt={3}>
