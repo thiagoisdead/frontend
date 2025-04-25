@@ -5,7 +5,7 @@ import { Box, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
 const text1 = "Marcar eventos com seus amigos não era pra ser tão difícil.";
-const text2 = "E não é, com Where and When.";
+const text2 = "E não é, com Okay, Where and When.";
 
 const container = {
   hidden: { opacity: 1 },
@@ -64,7 +64,6 @@ export default function AnimatedIntro() {
         ))}
       </motion.div>
 
-      {/* Animação da segunda frase */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,7 +73,7 @@ export default function AnimatedIntro() {
         }}
       >
         <Typography
-        fontSize={20}
+          fontSize={20}
           sx={{
             mt: 2,
             fontFamily: '"Special Gothic Expanded One", sans-serif',
