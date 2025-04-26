@@ -39,6 +39,7 @@ export default function Home() {
         });
 
         if (!response.ok) {
+          console.log('perfil nao existe')
           throw new Error('Erro ao buscar perfil');
         }
 
