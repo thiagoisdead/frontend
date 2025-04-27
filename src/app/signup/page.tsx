@@ -5,36 +5,36 @@ import '@fontsource/roboto';
 import { Box, Button, FormControl, Tab, Tabs, TextField, InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import '../styles/home.css'
 import dynamic from 'next/dynamic';
+import { FormUser } from "../../types/userTypes"
 import { useRouter } from 'next/navigation';
+import useAuthRedirect from '@/hooks/useVerifyToken';
 
 const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), { ssr: false });
 
 
 export default function Home() {
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState<string>('');
-  const [nickname, setNickname] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [registerOrLogin, setRegisterOrLogin] = useState('register');
-  const [password, setPassword] = useState('');
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  useAuthRedirect();
+
+
+
+  const [formData, setFormData] = useState<FormUser>({
+    email: '',
+    name: '',
+    nickname: '',
+    password: '',
+  })
   const router = useRouter();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      router.push('/')
-    }
-  }, []);
-
 
   const handleCaptcha = (token: string | null) => {
     console.log("Token recebido:", token)
@@ -42,7 +42,6 @@ export default function Home() {
   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(email, password, name, captchaToken)
     if (!captchaToken) {
       alert('Resolva o captcha');
       return
@@ -54,7 +53,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nickname: nickname, name: name, email: email, password: password, captchaToken: captchaToken })
+        body: JSON.stringify({ nickname: formData.nickname, name: formData.name, email: formData.email, password: formData.password, captchaToken: captchaToken })
       });
       if (res.ok) {
         const data = await res.json();  // Transforma a resposta em JSON
@@ -79,7 +78,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email, password: password, captchaToken: captchaToken })
+        body: JSON.stringify({ email: formData.email, password: formData.password, captchaToken: captchaToken })
       });
 
       if (res.ok) {
@@ -164,14 +163,19 @@ export default function Home() {
                 <Box display={"flex"} justifyContent={"center"}>
                   <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                     <FormControl fullWidth>
-                      <TextField autoFocus type='text' name='nickname' required id='nickname' label={"Digite o nome de usuário"} onChange={(e) => setNickname(e.target.value)}></TextField>
+                      <TextField autoFocus type='text' name='nickname' required id='nickname' label={"Digite o nome de usuário"} autoComplete='off'
+
+                        onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+                      ></TextField>
                     </FormControl>
                   </Box>
                 </Box>
                 <Box display={"flex"} justifyContent={"center"}>
                   <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                     <FormControl fullWidth>
-                      <TextField type='name' name='name' required id='name' label={"Digite o Nome"} onChange={(e) => setName(e.target.value)}></TextField>
+                      <TextField type='name' name='name' required id='name' label={"Digite o Nome"} autoComplete='off'
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      ></TextField>
                     </FormControl>
                   </Box>
                 </Box>
@@ -181,7 +185,14 @@ export default function Home() {
             <Box display={"flex"} justifyContent={"center"}>
               <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
                 <FormControl fullWidth>
-                  <TextField autoFocus type='email' name='email' required id='email' label={"Digite o email"} onChange={(e) => setEmail(e.target.value)}>
+                  <TextField autoFocus type='email' name='email' required id='email' label={"Digite o email"} autoComplete='off'
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true, // Faz o label encolher sempre
+                      },
+                    }}
+                  >
                   </TextField>
                 </FormControl>
               </Box>
@@ -194,9 +205,15 @@ export default function Home() {
                     name="password"
                     required
                     id="password"
+                    autoComplete='off'
                     label="Senha"
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true, // Faz o label encolher sempre
+                      },
+                    }}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    value={formData.password}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -204,7 +221,7 @@ export default function Home() {
                             aria-label="toggle password visibility"
                             onClick={handleClickShowPassword}
                             edge="end"
-                            sx={{mr: 0.5}}
+                            sx={{ mr: 0.5 }}
                           >
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
