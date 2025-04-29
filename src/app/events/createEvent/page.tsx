@@ -1,12 +1,12 @@
 'use client'
-import { Box, Button, FormControl, Step, StepButton, StepLabel, Stepper, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Step, StepButton, Stepper, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import '../../styles/events.css'
 import { Grid } from '@mui/system';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-const steps = ['Nome do evento e descrição', 'Dias e Horários', 'Quantidade de Pessoas e Localização', 'Contatos e Preços', 'Proibições', 'Adicionais opcionais', 'Finalização'];
+const steps = ['Nome do evento e descrição', 'Dias e Horários', 'Quantidade de Pessoas e Localização', 'Contatos e Preços', 'Permissões e proibições', 'Adicionais opcionais', 'Finalização'];
 
 export default function EventStepper() {
   const [activeStep, setActiveStep] = useState(0);
@@ -23,11 +23,15 @@ export default function EventStepper() {
       case 1:
         return (
           <Grid container spacing={2}>
-            <Grid size={{ lg: 12, sm: 12 }}>
-              <TextField type='text' label={'Oii'}></TextField>
+            <Grid size={{ lg: 6, sm: 6, xs: 6 }}>
+              <FormControl fullWidth margin='normal'>
+                <TextField fullWidth type='text' label={'Oii'}></TextField>
+              </FormControl>
             </Grid>
-            <Grid size={{ lg: 12, sm: 12 }}>
-              <TextField type='text' label={'Oii'}></TextField>
+            <Grid size={{ lg: 6, sm: 6, xs: 6 }}>
+              <FormControl fullWidth margin='normal'>
+                <TextField fullWidth type='text' label={'Oii'}></TextField>
+              </FormControl>
             </Grid>
           </Grid>
         )
@@ -97,9 +101,12 @@ export default function EventStepper() {
             </Button>
           </Box>
           {/* Conteúdo do step */}
-          <Grid size={{ xs: 12 }} display="flex" justifyContent="center" bgcolor={'orange'} alignItems="center">
-            {renderStepContent(activeStep)}
+          <Grid size={{ xs: 12, lg: 12 }} display="flex" justifyContent="center" bgcolor={'orange'} alignItems="center">
+            <Box sx={{ width: '100%' }}> 
+              {renderStepContent(activeStep)}
+            </Box>
           </Grid>
+
 
           {/* Stepper */}
           <Grid size={{ xs: 12 }}>
