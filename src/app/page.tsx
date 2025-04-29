@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Box, Typography, Grid } from "@mui/material";
 import { useEffect, useState } from 'react';
 // app/page.tsx
-import LogoutButton from '../components/LogoutButton'; // ou o caminho relativo correto
-import AnimatedIntro from '../components/firstText'; // ou o caminho relativo correto
+import LogoutButton from '../components/signup/LogoutButton'; // ou o caminho relativo correto
+import AnimatedIntro from '../components/home/firstText'; // ou o caminho relativo correto
 
 import Image from 'next/image';
 
