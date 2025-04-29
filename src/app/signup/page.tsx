@@ -2,7 +2,7 @@
 
 import '@fontsource/special-gothic-expanded-one';
 import '@fontsource/roboto';
-import { Box, Button, FormControl, Tab, Tabs, TextField, InputAdornment, IconButton } from "@mui/material";
+import { Box, Button, Tab, Tabs, TextField, InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { useState } from 'react';
@@ -11,6 +11,8 @@ import dynamic from 'next/dynamic';
 import { FormUser } from "../../types/userTypes"
 import { useRouter } from 'next/navigation';
 import useAuthRedirect from '@/hooks/useVerifyToken';
+import { Grid } from '@mui/system';
+import DOMPurify from 'dompurify';
 
 const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), { ssr: false });
 
@@ -42,10 +44,19 @@ export default function Home() {
   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!captchaToken) {
       alert('Resolva o captcha');
       return
     }
+
+    const sanitizedData = {
+      email: DOMPurify.sanitize(formData.email || ""),
+      name: formData.name ? DOMPurify.sanitize(formData.name) : "",
+      nickname: formData.nickname ? DOMPurify.sanitize(formData.nickname) : "",
+      password: DOMPurify.sanitize(formData.password || ""),
+    };
+
     setLoading(true)
     if (registerOrLogin === 'register') {
       const res = await fetch("http://localhost:3001/auth/signup", {
@@ -53,7 +64,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nickname: formData.nickname, name: formData.name, email: formData.email, password: formData.password, captchaToken: captchaToken })
+        body: JSON.stringify({ nickname: sanitizedData.nickname, name: sanitizedData.name, email: sanitizedData.email, password: sanitizedData.password, captchaToken: captchaToken })
       });
       if (res.ok) {
         const data = await res.json();  // Transforma a resposta em JSON
@@ -110,9 +121,7 @@ export default function Home() {
         display="flex"
         justifyContent="flex-end"
       >
-        <Box sx={{ width: '75%', height: 'auto' }} className="bg2Svg">
-
-        </Box>
+        <Box sx={{ width: '75%', height: 'auto' }} className="bg2Svg" />
         <Box
           display={"flex"}
           justifyContent={"flex-start"}
@@ -123,129 +132,129 @@ export default function Home() {
             bgcolor: '#FFFAF0',
           }}
         >
-          <Box mt={3}>
-            <Box display={'flex'} alignItems={"center"} sx={{ width: '100%', mb: 4 }}>
-              <Box sx={{ width: '100%' }}>
-                <Tabs
-                  value={registerOrLogin}
-                  onChange={(event, newValue) => setRegisterOrLogin(newValue)}
-                  sx={{ width: '100%', display: 'flex' }}
-                >
-                  <Tab
-                    value="register"
-                    label="Registro"
-                    sx={{
-                      flex: 1,
-                      color: 'black',
-                      fontFamily: 'Roboto',
-                      textTransform: 'none',
-                      fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem', lg: '2.5rem' },
-                      cursor: 'pointer',
-                    }}
-                  />
-                  <Tab
-                    value="login"
-                    label="Login"
-                    sx={{
-                      flex: 1, textTransform: 'none',
-                      fontFamily: 'Roboto',
-                      color: 'black',
-                      fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem', lg: '2.5rem' },
-                      cursor: 'pointer',
+          <Grid container spacing={2} sx={{ mt: 3, px: 6 }} rowSpacing={5}>
+            <Grid size={{ xs: 12 }} sx={{ mb: 4 }}>
+              <Tabs
+                value={registerOrLogin}
+                onChange={(event, newValue) => setRegisterOrLogin(newValue)}
+                sx={{ width: '100%' }}
+              >
+                <Tab
+                  value="register"
+                  label="Registro"
+                  sx={{
+                    flex: 1,
+                    color: 'black',
+                    fontFamily: 'Roboto',
+                    textTransform: 'none',
+                    fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem', lg: '2.5rem' },
+                    cursor: 'pointer',
+                  }}
+                />
+                <Tab
+                  value="login"
+                  label="Login"
+                  sx={{
+                    flex: 1,
+                    color: 'black',
+                    fontFamily: 'Roboto',
+                    textTransform: 'none',
+                    fontSize: { xs: '0.75rem', sm: '1rem', md: '1.5rem', lg: '2.5rem' },
+                    cursor: 'pointer',
+                  }}
+                />
+              </Tabs>
+            </Grid>
+            <>
+              {registerOrLogin === 'register' && (
+                <>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      autoFocus
+                      fullWidth
+                      type="text"
+                      name="nickname"
+                      required
+                      id="nickname"
+                      label="Digite o nome de usuário"
+                      autoComplete="off"
+                      onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      fullWidth
+                      type="text"
+                      name="name"
+                      required
+                      id="name"
+                      label="Digite o Nome"
+                      autoComplete="off"
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </Grid>
+                </>
+              )}
 
-                    }}
-                  />
-                </Tabs>
-              </Box>
-            </Box>
-            {registerOrLogin === 'register' && (
-              <>
-                <Box display={"flex"} justifyContent={"center"}>
-                  <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
-                    <FormControl fullWidth>
-                      <TextField autoFocus type='text' name='nickname' required id='nickname' label={"Digite o nome de usuário"} autoComplete='off'
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  autoFocus
+                  type="email"
+                  name="email"
+                  required
+                  id="email"
+                  label="Digite o email"
+                  autoComplete="off"
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
 
-                        onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
-                      ></TextField>
-                    </FormControl>
-                  </Box>
-                </Box>
-                <Box display={"flex"} justifyContent={"center"}>
-                  <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
-                    <FormControl fullWidth>
-                      <TextField type='name' name='name' required id='name' label={"Digite o Nome"} autoComplete='off'
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      ></TextField>
-                    </FormControl>
-                  </Box>
-                </Box>
-              </>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  required
+                  id="password"
+                  autoComplete="off"
+                  label="Senha"
+                  helperText={'A senha deve ter pelo menos 8 caracteres, incluir uma letra maiúscula, uma minúscula, um número e um caractere especial.'}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
 
-            )}
-            <Box display={"flex"} justifyContent={"center"}>
-              <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
-                <FormControl fullWidth>
-                  <TextField autoFocus type='email' name='email' required id='email' label={"Digite o email"} autoComplete='off'
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true, // Faz o label encolher sempre
-                      },
-                    }}
-                  >
-                  </TextField>
-                </FormControl>
-              </Box>
-            </Box>
-            <Box display={"flex"} justifyContent={"center"}>
-              <Box sx={{ width: '80%', height: '100%', mt: 5 }} >
-                <FormControl fullWidth>
-                  <TextField
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    required
-                    id="password"
-                    autoComplete='off'
-                    label="Senha"
-                    slotProps={{
-                      inputLabel: {
-                        shrink: true, // Faz o label encolher sempre
-                      },
-                    }}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    value={formData.password}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            edge="end"
-                            sx={{ mr: 0.5 }}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </FormControl>
-              </Box>
-            </Box>
-            <Box display="flex" justifyContent="center">
-              <Box sx={{ width: '80%', mt: 5 }}>
+              <Grid size={{ xs: 12 }}>
                 <ReCAPTCHA
                   sitekey="6LeJSR4rAAAAAEDJ_MqWrv8-It_EEUGfYSbtgUbT"
                   onChange={handleCaptcha}
                 />
-              </Box>
-            </Box>
-            <Box display="flex" justifyContent="center">
-              <Box sx={{ width: '80%', mt: 5 }}>
-                <Button type='submit' variant='contained' disabled={loading}>Enviar</Button>
-              </Box>
-            </Box>
-          </Box>
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <Button type="submit" variant="contained" fullWidth disabled={loading}>
+                  Enviar
+                </Button>
+              </Grid>
+            </>
+          </Grid>
+
         </Box>
       </Box>
     </form >
