@@ -81,19 +81,45 @@ const StyledWrapper = styled.div`
   }
 `;
 
+
+
 export default function LogoutButton() {
 
   const router = useRouter();
 
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token')
+
+    if (!token) {
+      return router.push('/signup')
+    }
+    try {
+      const response = await fetch("http://localhost:3001/auth/logout", {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.removeItem('token');
+        router.push('/signup')
+      }
+      else {
+        console.log('Erro no logout', data.error)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+
+  }
   return (
     <StyledWrapper >
-      <button 
+      <button
         className="Btn"
-        onClick={() => {
-          localStorage.removeItem('token');
-          router.push('/')
-          window.location.reload();
-        }}
+        onClick={handleLogout}
       >
         <div className="sign">
           <svg viewBox="0 0 512 512">
