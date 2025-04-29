@@ -20,15 +20,15 @@ const theme = createTheme({
                 body: {
                     margin: 0,
                     padding: 0,
-                    height: '100%',  // Para garantir que o body ocupe toda a altura
-                    overflowX: 'hidden', // Isso pode ajudar a evitar barras de rolagem horizontais indesejadas
+                    height: '100%',  
+                    overflowX: 'hidden',
                 },
             },
         },
     },
     breakpoints: {
         values: {
-            xs: 0,
+            xs: 300,
             sm: 600,
             md: 900,
             lg: 1200,
