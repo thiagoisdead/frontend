@@ -5,44 +5,21 @@ import { useRouter } from 'next/navigation';
 import '../styles/events.css'
 
 import { Box, Typography, Paper } from "@mui/material";
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
+import useAuthenticated from '@/hooks/useAuth';
 
 export default function Home() {
   const router = useRouter();
-  const [autenthicated, setAuthenticated] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const token: string | null = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('Token não encontrado. Faça login.');
-        }
+  const authenticated = useAuthenticated();
 
-        const response = await fetch('http://localhost:3001/user/profile', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Erro ao buscar perfil');
-        }
-
-        const data = await response.json();
-        console.log(data)
-        setAuthenticated(true)
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.log(error)
-        }
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
+  if (!authenticated) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Typography>Carregando...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box width={'100%'} height={'100%'} className="eventsSvg" display={"flex"} alignItems={"center"} justifyContent={"center"}>
