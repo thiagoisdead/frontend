@@ -4,57 +4,26 @@ import '@fontsource/special-gothic-expanded-one';
 import '../../src/app/styles/home.css';
 import { useRouter } from 'next/navigation';
 
-import { Box, Typography, Grid } from "@mui/material";
+import { Box, Typography, Grid, Slide } from "@mui/material";
 import { useEffect, useState } from 'react';
 // app/page.tsx
 import LogoutButton from '../components/signup/LogoutButton'; // ou o caminho relativo correto
 import AnimatedIntro from '../components/home/firstText'; // ou o caminho relativo correto
+import useAuthenticated from '@/hooks/useAuth';
+
 
 import Image from 'next/image';
 
-interface User {
-  name: string;
-  email: string;
-}
+
 
 export default function Home() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [autenthicated, setAuthenticated] = useState<boolean>(false);
 
+  const [showLogo, setShowLogo] = useState<boolean>(false);
+  const {authenticated, user} = useAuthenticated();
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const token: string | null = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('Token não encontrado. Faça login.');
-        }
-
-        const response = await fetch('http://localhost:3001/user/profile', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          console.log('perfil nao existe')
-          throw new Error('Erro ao buscar perfil');
-        }
-
-        const data = await response.json();
-        setAuthenticated(true);
-        setUser(data);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.log(error)
-        }
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
+    setShowLogo(true)
+  }, [])
 
   return (
     <Box width={'100%'}>
@@ -67,7 +36,7 @@ export default function Home() {
         background: "#FFFAF0",
         alignItems: "center"
       }}>
-        <Grid size={{ md: 4 }}>
+        <Grid size={{ md: 4, sm: 4 }}>
           <Box sx={{
             width: '100%',
             height: '100%',
@@ -75,22 +44,24 @@ export default function Home() {
             alignItems: 'center',
             justifyContent: 'flex-start'
           }}>
-            <Image
-              alt="logo"
-              src="/images/haha.png"
-              width={'120'}
-              height={'40'}
-              style={{
-                fill: 'black',
-                maxHeight: "100%",
-                maxWidth: "100%",
-                display: "block",
-              }}
-            />
+            <Slide in={showLogo} timeout={500} direction='right'>
+              <Image
+                alt="logo"
+                src="/images/haha.png"
+                width={'120'}
+                height={'40'}
+                style={{
+                  fill: 'black',
+                  maxHeight: "100%",
+                  maxWidth: "100%",
+                  display: "block",
+                }}
+              />
+            </Slide>
           </Box>
         </Grid>
 
-        <Grid size={{ md: 4 }}>
+        <Grid size={{ md: 4, sm: 4 }}>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             {/* <Typography
               fontSize={30}
@@ -107,9 +78,9 @@ export default function Home() {
           </Box>
         </Grid>
 
-        <Grid size={{ md: 4 }}>
+        <Grid size={{ md: 4, sm: 4 }}>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2 }}>
-            {!autenthicated ? (
+            {!authenticated ? (
               <Typography
                 onClick={() => router.push('/signup')}
                 // bgcolor="#ff3259"
