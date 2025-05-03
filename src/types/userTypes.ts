@@ -1,6 +1,11 @@
-export type FormUser = {
+type BaseUser = {
     email: string;
+    name: string;
+};
+
+type FormUser = BaseUser & {
     password: string;
-    name?: string;
     nickname?: string;
-}
+};
+
+export type { BaseUser, FormUser };
