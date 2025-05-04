@@ -1,30 +1,54 @@
-'use client'
+'use client';
 
+import { Box } from '@mui/material';
+import { motion } from 'framer-motion';
 
-import { Box, Typography } from "@mui/material";
-import { motion } from "framer-motion";
-
-const texts = {
-  text1: "Marcar eventos com seus amigos não era pra ser tão difícil.",
-  text2: "E não é, com Okay, Where and When."
+type AnimatedStepTextProps = {
+  texts: string[];
+  activeStep: number;
+  onComplete?: () => void;
+  mode?: 'letters' | 'words';
+  // Velocidades separadas para cada modo (em segundos)
+  letterStaggerDelay?: number;
+  letterDuration?: number;
+  wordStaggerDelay?: number;
+  wordDuration?: number;
 };
 
-const container = {
-  hidden: { opacity: 1 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
+export default function StepText({
+  texts,
+  activeStep,
+  onComplete,
+  mode = 'words',
+  letterStaggerDelay = 0.02,
+  letterDuration = 0.3,
+  wordStaggerDelay = 0.05,
+  wordDuration = 0.4,
+}: AnimatedStepTextProps) {
+  const textToShow = texts[activeStep] || '';
+  const items = mode === 'letters' ? Array.from(textToShow) : textToShow.split(' ');
+
+  // define os valores de stagger e duration com base no modo
+  const staggerDelay = mode === 'letters' ? letterStaggerDelay : wordStaggerDelay;
+  const itemDuration = mode === 'letters' ? letterDuration : wordDuration;
+
+  const containerVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: staggerDelay },
     },
-  },
-};
+  };
 
-const item = {
-  hidden: { y: -50, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.4 } },
-};
+  const itemVariants = {
+    hidden: { y: -50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: itemDuration },
+    },
+  };
 
-export default function Text1() {
   return (
     <Box
       display="flex"
@@ -32,9 +56,8 @@ export default function Text1() {
       alignItems="center"
       justifyContent="center"
       sx={{
-        height: '10%',
-        width: '90%',
-        justifySelf: 'center',
+        height: '100%',
+        width: '100%',
         boxSizing: 'border-box',
         fontFamily: '"Special Gothic Expanded One", sans-serif',
         fontSize: 25,
@@ -43,46 +66,32 @@ export default function Text1() {
       }}
     >
       <motion.div
-        variants={container}
+        key={activeStep + mode}
+        variants={containerVariants}
         initial="hidden"
         animate="visible"
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-        }}
+        onAnimationComplete={onComplete}
+        style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}
       >
-        {texts.text1.split(" ").map((word, index) => (
+        {items.map((text, idx) => (
           <motion.span
-            key={index}
-            variants={item}
+            key={idx}
+            variants={itemVariants}
             style={{
-              marginRight: "0.4rem",
-              whiteSpace: "nowrap",
+              fontFamily: 'roboto',
+              color: 'black',
+              marginRight:
+                mode === 'words'
+                  ? '0.4rem'
+                  : text === ' '
+                    ? '0.1rem'
+                    : '0.02rem',
+              whiteSpace: mode === 'words' ? 'nowrap' : 'pre',
             }}
           >
-            {word}
+            {text}
           </motion.span>
         ))}
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: texts.text2.split(" ").length * 0.05 + 1.5,
-          duration: 0.6,
-        }}
-      >
-        <Typography
-          fontSize={20}
-          sx={{
-            mt: 2,
-            fontFamily: '"Special Gothic Expanded One", sans-serif',
-          }}
-        >
-          {texts.text2}
-        </Typography>
       </motion.div>
     </Box>
   );
