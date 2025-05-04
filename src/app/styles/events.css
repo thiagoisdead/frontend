@@ -1,3 +1,7 @@
+@import 'typeface-quicksand';
+@import 'typeface-playfair-display';
+
+
 * {
     margin: 0;
     padding: 0;
@@ -32,3 +36,11 @@ input:-webkit-autofill {
     /* ou 'contain' se quiser mostrar tudo */
     background-position: center;
 }
+
+.informal {
+    font-family: 'Quicksand', sans-serif;
+  }
+  
+  .formal {
+    font-family: 'Playfair Display', serif;
+  }
