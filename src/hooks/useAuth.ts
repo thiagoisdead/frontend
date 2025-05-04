@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BaseUser } from '@/types/userTypes';
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const useAuthenticated = () => {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<BaseUser | null>(null);
@@ -14,7 +16,8 @@ const useAuthenticated = () => {
           throw new Error('Token não encontrado. Faça login.');
         }
 
-        const response = await fetch('http://localhost:3001/user/profile', {
+        // const response = await fetch('http://localhost:3001/user/profile', {
+          const response = await fetch(`${apiUrl}/user/profile`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

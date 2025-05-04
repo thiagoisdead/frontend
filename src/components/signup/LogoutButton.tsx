@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 const StyledWrapper = styled.div`
   .Btn {
     display: flex;
@@ -94,7 +97,9 @@ export default function LogoutButton() {
       return router.push('/signup')
     }
     try {
-      const response = await fetch("http://localhost:3001/auth/logout", {
+      // const response = await fetch("http://localhost:3001/auth/logout", {
+      const response = await fetch(`${apiUrl}/auth/logout`, {
+
         method: 'POST',
         headers: {
           "Content-Type": "application/json",

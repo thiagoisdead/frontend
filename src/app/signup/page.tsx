@@ -2,7 +2,7 @@
 
 import '@fontsource/special-gothic-expanded-one';
 import '@fontsource/roboto';
-import { Box, Button, Tab, Tabs, TextField, InputAdornment, IconButton } from "@mui/material";
+import { Box, Button, Tab, Tabs, TextField, InputAdornment, IconButton, Grid } from "@mui/material";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { useState } from 'react';
@@ -11,7 +11,6 @@ import dynamic from 'next/dynamic';
 import { FormUser } from "../../types/userTypes"
 import { useRouter } from 'next/navigation';
 import useAuthRedirect from '@/hooks/useVerifyToken';
-import { Grid } from '@mui/system';
 import DOMPurify from 'dompurify';
 
 const ReCAPTCHA = dynamic(() => import("react-google-recaptcha"), { ssr: false });
@@ -23,8 +22,7 @@ export default function Home() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   useAuthRedirect();
-
-
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const [formData, setFormData] = useState<FormUser>({
     email: '',
@@ -44,7 +42,7 @@ export default function Home() {
   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!captchaToken) {
       alert('Resolva o captcha');
       return
@@ -59,7 +57,8 @@ export default function Home() {
 
     setLoading(true)
     if (registerOrLogin === 'register') {
-      const res = await fetch("http://localhost:3001/auth/signup", {
+      // const res = await fetch("http://localhost:3001/auth/signup", {
+      const res = await fetch(`${apiUrl}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +83,8 @@ export default function Home() {
       console.log(res)
     }
     if (registerOrLogin === 'login') {
-      const res = await fetch("http://localhost:3001/auth/login", {
+      // const res = await fetch("http://localhost:3001/auth/login", {
+      const res = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,6 @@ export default function Home() {
       console.log(res)
     }
   }
-
 
   return (
     <form onSubmit={handleSubmit}>

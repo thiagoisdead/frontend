@@ -53,7 +53,7 @@ export default function Home() {
               textAlign: 'justify '
             }}
           >
-            Marque eventos organizados, com todo mundo em sintonia no horário, local e no que levar, sem estresse e com muito mais diversão. Um churrasco, uma sinuca, um rolê com os amigos, oque vem hoje? 😉
+            Marque eventos organizados, com todo mundo em sintonia no horário, local e no que levar, sem estresse e com muito mais diversão. Um churrasco, uma sinuca, um rolê?, oque vem hoje? 😉
           </Typography>
         </Paper>
         <Paper elevation={20} sx={{
