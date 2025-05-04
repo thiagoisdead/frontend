@@ -2,6 +2,7 @@
 
 import {
   Box,
+  Button,
   Fade,
   FormControl,
   Slide,
@@ -11,7 +12,9 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import '@fontsource/special-gothic-expanded-one';
+
 import '../../styles/events.css';
 import { Grid } from '@mui/system';
 import Image from 'next/image';
@@ -30,7 +33,7 @@ const steps = [
 ];
 
 const stepsTexts = [
-  "Vamos dar vida ao seu evento! Primeiro, crie um nome marcante e defina se será corporativo ou social, assim podemos falar exatamente na sua vibe.",
+  "Vamos dar vida ao seu evento! Primeiro, crie um nome marcante, e depois defina o tipo, assim podemos falar exatamente na sua vibe 😉",
   "Segundo passo bacana",
   "Terceiro com emoção",
   "Quarto super importante",
@@ -42,8 +45,14 @@ const stepsTexts = [
 export default function EventStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [pendingStep, setPendingStep] = useState<number | null>(null);
-  const [step0Name, setStep0Name] = useState('');
-  const [step0Type, setStep0Type] = useState('');
+  const [data, setData] = useState({
+    step0Name: '',
+    step0Type: '',
+    // future fields:
+    // step1Date: '',
+    // step1Description: '',
+  });
+
 
   const [showBox, setShowBox] = useState(false);
   const [showImage, setShowImage] = useState(false);
@@ -76,46 +85,107 @@ export default function EventStepper() {
     }
   }, [stepTextDone]);
 
-  // + useMemo para completed
-  const completed = useMemo(() => {
-    const step0Done = step0Name.trim() !== '' && step0Type.trim() !== '';
-    return [step0Done, ...Array(steps.length - 1).fill(false)];
-  }, [step0Name, step0Type]);
+  const handleChange = (key: string, value: string) => {
+    setData((prev) => ({ ...prev, [key]: value }));
+  };
 
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
         return (
-          <Grid container spacing={2} display={'flex'} bgcolor={'cyan'} alignContent={'center, space-beteween'} justifyContent={'center'} sx={{ height: '24rem' }}>
+          <Grid container spacing={2} display={'flex'}
+            // bgcolor={'cyan'} 
+            alignContent={'center, space-beteween'} justifyContent={'center'} sx={{ height: '25rem' }} mb={'2rem'}>
             <Grid size={{ lg: 8, sm: 6, xs: 12 }}>
               <FormControl fullWidth margin="normal">
                 <TextField
                   fullWidth
                   label="Nome do Evento"
-                  value={step0Name}
-                  onChange={(e) => setStep0Name(e.target.value)}
+                  value={data?.step0Name}
+                  onChange={(e) => handleChange('step0Name', e.target.value)}
                 />
               </FormControl>
             </Grid>
-            <Grid size={{ lg: 6, sm: 6, xs: 12 }} display={'flex'} justifyContent={'center'} bgcolor={'yellow'} sx={{
-              opacity: step0Name ? 1 : 0,
-              transition: 'opacity 0.3s ease-in-out',
-            }}>
-              <Image src={'/images/beer.svg'} alt='beer' width={200} height={200} />
-            </Grid>
+            <Fade in={!!data?.step0Name} timeout={1000} unmountOnExit>
+              <Grid size={{ lg: 6, sm: 6, xs: 12 }} display={'flex'} justifyContent={'center'} alignItems={'flex-start'}>
+                <Typography className='informal' fontSize={20}>Informal, Social</Typography>
+              </Grid>
+
+            </Fade>
+            <Fade in={!!data?.step0Name} timeout={1000} unmountOnExit>
+              <Grid size={{ lg: 6, sm: 6, xs: 12 }} display={'flex'} justifyContent={'center'} alignItems={'flex-start'}>
+                <Typography className='formal' fontSize={20}>Formal, Refinado</Typography>
+              </Grid>
+            </Fade>
             <Grid
               size={{ lg: 6, sm: 6, xs: 12 }}
               display="flex"
               justifyContent="center"
-              bgcolor="yellow"
-              sx={{
-                opacity: step0Name ? 1 : 0,
-                transition: 'opacity 0.3s ease-in-out',
-              }}
+              alignItems="flex-end"
+              // bgcolor="yellow"
+              sx={{ width: 200, height: 200 }}
+
             >
-              <Image src={'/images/socialParty.svg'} alt='beer' width={200} height={200} />
+              <Fade in={!!data?.step0Name} timeout={1000} unmountOnExit>
+                <Button
+                  sx={{
+                    p: 0, // remove padding do botão
+                    background: 'none', // remove background se quiser deixar só a imagem
+                    boxShadow: 'none',
+                  }}
+                  onClick={() => handleChange('step0Type', 'informal')}                >
+                  <Box
+                    sx={{
+                      animation: 'pulse 1.5s ease-in-out infinite',
+                      '@keyframes pulse': {
+                        '0%': { transform: 'scale(1)' },
+                        '50%': { transform: 'scale(1.1)' },
+                        '100%': { transform: 'scale(1)' },
+                      },
+                    }}
+
+                  >
+                    <Image src={'/images/beer.svg'} alt="beer" width={200} height={200} typeof="svg" draggable={false} />
+                  </Box>
+                </Button>
+              </Fade>
             </Grid>
-          </Grid>
+
+            <Grid
+              size={{ lg: 6, sm: 6, xs: 12 }}
+              display="flex"
+              justifyContent="center"
+              alignItems="flex-end"
+              // bgcolor="yellow"
+              sx={{ width: 200, height: 200 }}
+            >
+              <Fade in={!!data?.step0Name} timeout={500} unmountOnExit>
+                <Button
+                  sx={{
+                    p: 0,
+                    background: 'none', // remove background se quiser deixar só a imagem
+                    // boxShadow: 'none',
+                  }}
+                  onClick={() => handleChange('step0Type', 'informal')}
+                >
+                  <Box
+                    sx={{
+                      animation: 'pulse 1.5s ease-in-out infinite',
+                      '@keyframes pulse': {
+                        '0%': { transform: 'scale(1)' },
+                        '50%': { transform: 'scale(1.1)' },
+                        '100%': { transform: 'scale(1)' },
+                      },
+                    }}
+                  >
+                    <Image src={'/images/formalParty.svg'} alt="beer" width={300} height={200} typeof="svg" draggable={false} />
+                  </Box>
+                </Button>
+              </Fade>
+            </Grid>
+
+
+          </Grid >
         );
       case 1:
         return <Typography>Formulário do passo 2</Typography>;
@@ -175,7 +245,7 @@ export default function EventStepper() {
             sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
           >
             {/* Animated Step Text */}
-            <Grid size={{ xs: 12, lg: 12 }} sx={{ height: '15%', display: 'flex', justifyContent: 'center', bgcolor: 'pink' }}>
+            <Grid size={{ xs: 12, lg: 12 }} sx={{ height: '15%', display: 'flex', justifyContent: 'center' }}>
               <Box sx={{ width: '60%' }}>
                 <StepText
                   texts={stepsTexts}
@@ -191,11 +261,10 @@ export default function EventStepper() {
             </Grid>
 
             {/* Form Content */}
-            <Grid size={{ xs: 12, lg: 12 }} sx={{ height: '65%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} bgcolor={'red'}>
-              <Box sx={{ width: '80%' }}>
+            <Grid size={{ xs: 12, lg: 12 }} sx={{ height: '75%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Box sx={{ width: '100%', height: 'auto' }}>
                 {mountContent && (
-                  <Fade
-                    in={contentVisible && stepTextDone}
+                  <Fade in={contentVisible && stepTextDone}
                     timeout={700}
                     onExited={() => {
                       if (pendingStep !== null) {
@@ -217,7 +286,7 @@ export default function EventStepper() {
             </Grid>
 
             {/* Stepper */}
-            <Grid size={{ xs: 12 }} sx={{ bgcolor: 'green' }}>
+            <Grid size={{ xs: 12 }}>
               <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                 {steps.map((label, index) => (
                   <Step key={label}>
