@@ -34,7 +34,7 @@ const steps = [
 
 const stepsTexts = [
   "Vamos dar vida ao seu evento! Primeiro, crie um nome marcante, e depois defina o tipo, assim podemos falar exatamente na sua vibe 😉",
-  "Segundo passo bacana",
+  "Perfeito! Agora, defina datas e horários, e nos dê uma descrição do evento.",
   "Terceiro com emoção",
   "Quarto super importante",
   "Quinto quase lá",
@@ -45,6 +45,13 @@ const stepsTexts = [
 export default function EventStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [pendingStep, setPendingStep] = useState<number | null>(null);
+  const [showBox, setShowBox] = useState(false);
+  const [showImage, setShowImage] = useState(false);
+  const [stepTextDone, setStepTextDone] = useState(false);
+  const [mountContent, setMountContent] = useState(false);
+  const [contentVisible, setContentVisible] = useState(true);
+
+  const [completedSteps, setCompletedSteps] = useState<{ [key: number]: boolean }>({});
   const [data, setData] = useState({
     step0Name: '',
     step0Type: '',
@@ -52,14 +59,6 @@ export default function EventStepper() {
     // step1Date: '',
     // step1Description: '',
   });
-
-
-  const [showBox, setShowBox] = useState(false);
-  const [showImage, setShowImage] = useState(false);
-  const [stepTextDone, setStepTextDone] = useState(false);
-  const [mountContent, setMountContent] = useState(false);
-  const [contentVisible, setContentVisible] = useState(true);
-
   const router = useRouter();
   const authenticated = useAuthenticated();
 
@@ -85,6 +84,25 @@ export default function EventStepper() {
     }
   }, [stepTextDone]);
 
+  useEffect(() => {
+    const newCompleted: { [key: number]: boolean } = {};
+
+    if (data.step0Name.trim() && data.step0Type.trim()) {
+      newCompleted[0] = true;
+    }
+
+    // if (data.step1Date?.trim() && data.step1Description?.trim()) {
+    //   newCompleted[1] = true;
+    // }
+
+    // if (data.step2Qtd && data.step2Location) {
+    //   newCompleted[2] = true;
+    // }
+
+    setCompletedSteps(newCompleted);
+  }, [data]);
+
+
   const handleChange = (key: string, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
@@ -93,9 +111,7 @@ export default function EventStepper() {
     switch (step) {
       case 0:
         return (
-          <Grid container spacing={2} display={'flex'}
-            // bgcolor={'cyan'} 
-            alignContent={'center, space-beteween'} justifyContent={'center'} sx={{ height: '25rem' }} mb={'2rem'}>
+          <>
             <Grid size={{ lg: 8, sm: 6, xs: 12 }}>
               <FormControl fullWidth margin="normal">
                 <TextField
@@ -129,26 +145,44 @@ export default function EventStepper() {
               <Fade in={!!data?.step0Name} timeout={1000} unmountOnExit>
                 <Button
                   sx={{
-                    p: 0, // remove padding do botão
-                    background: 'none', // remove background se quiser deixar só a imagem
+                    p: 0,
+                    backgroundColor: 'transparent',
                     boxShadow: 'none',
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none',
+                    },
+                    '&:active': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none',
+                    },
+                    '&:focus': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none',
+                    },
                   }}
-                  onClick={() => handleChange('step0Type', 'informal')}                >
+                  disableFocusRipple
+                  disableRipple
+                  onClick={() => handleChange('step0Type', 'informal')}
+                >
                   <Box
                     sx={{
-                      animation: 'pulse 1.5s ease-in-out infinite',
+                      transform: data?.step0Type === 'informal' ? 'scale(1.1)' : 'scale(1)',
+                      animation: data?.step0Type === 'informal' ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                      transition: 'transform 1s ease-in-out',
                       '@keyframes pulse': {
                         '0%': { transform: 'scale(1)' },
                         '50%': { transform: 'scale(1.1)' },
                         '100%': { transform: 'scale(1)' },
                       },
-                    }}
 
+                    }}
                   >
                     <Image src={'/images/beer.svg'} alt="beer" width={200} height={200} typeof="svg" draggable={false} />
                   </Box>
                 </Button>
               </Fade>
+
             </Grid>
 
             <Grid
@@ -163,14 +197,33 @@ export default function EventStepper() {
                 <Button
                   sx={{
                     p: 0,
-                    background: 'none', // remove background se quiser deixar só a imagem
-                    // boxShadow: 'none',
+                    backgroundColor: 'transparent',
+                    boxShadow: 'none',
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none',
+                    },
+                    '&:active': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none',
+                    },
+                    '&:focus': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none',
+                    },
                   }}
-                  onClick={() => handleChange('step0Type', 'informal')}
+                  disableFocusRipple
+                  disableRipple
+                  onClick={() => {
+                    handleChange('step0Type', 'formal');
+                    console.log(data?.step0Type);
+                  }}
                 >
                   <Box
                     sx={{
-                      animation: 'pulse 1.5s ease-in-out infinite',
+                      transform: data?.step0Type === 'formal' ? 'scale(1.1)' : 'scale(1)',
+                      animation: data?.step0Type === 'formal' ? 'pulse 1.5s ease-in-out infinite' : 'none',
+                      transition: 'transform 1s ease-in-out',
                       '@keyframes pulse': {
                         '0%': { transform: 'scale(1)' },
                         '50%': { transform: 'scale(1.1)' },
@@ -180,12 +233,11 @@ export default function EventStepper() {
                   >
                     <Image src={'/images/formalParty.svg'} alt="beer" width={300} height={200} typeof="svg" draggable={false} />
                   </Box>
+
                 </Button>
               </Fade>
             </Grid>
-
-
-          </Grid >
+          </>
         );
       case 1:
         return <Typography>Formulário do passo 2</Typography>;
@@ -279,7 +331,14 @@ export default function EventStepper() {
                       }
                     }}
                   >
-                    <Box sx={{ width: '100%' }}>{renderStepContent(activeStep)}</Box>
+                    <Box sx={{ width: '100%' }}>
+                      <Grid container spacing={2} display={'flex'}
+                        // bgcolor={'cyan'}
+                        alignContent={'center, space-beteween'} justifyContent={'center'} sx={{ height: '25rem' }} mb={'2rem'}>
+
+                        {renderStepContent(activeStep)}
+                      </Grid>
+                    </Box>
                   </Fade>
                 )}
               </Box>
@@ -289,7 +348,7 @@ export default function EventStepper() {
             <Grid size={{ xs: 12 }}>
               <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                 {steps.map((label, index) => (
-                  <Step key={label}>
+                  <Step key={label} completed={completedSteps[index] || false}>
                     <StepButton
                       onClick={() => {
                         if (index !== activeStep) {
