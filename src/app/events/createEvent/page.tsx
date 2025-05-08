@@ -5,6 +5,9 @@ import {
   Button,
   Fade,
   FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
   Slide,
   Step,
   StepButton,
@@ -20,7 +23,14 @@ import { Grid } from '@mui/system';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import useAuthenticated from '@/hooks/useAuth';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
 import StepText from '@/components/createEvent/createEventTexts';
+
+import { DateTimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+
 
 const steps = [
   'Nome e Tipo',
@@ -55,7 +65,10 @@ export default function EventStepper() {
   const [data, setData] = useState({
     step0Name: '',
     step0Type: '',
-    // future fields:
+    step1Date: '',
+    step1Decision: '',
+    step1UndecidedDate1: '',
+    step1UndecidedDate2: '',
     // step1Date: '',
     // step1Description: '',
   });
@@ -90,6 +103,8 @@ export default function EventStepper() {
     if (data.step0Name.trim() && data.step0Type.trim()) {
       newCompleted[0] = true;
     }
+
+    console.log(data)
 
     // if (data.step1Date?.trim() && data.step1Description?.trim()) {
     //   newCompleted[1] = true;
@@ -216,7 +231,6 @@ export default function EventStepper() {
                   disableRipple
                   onClick={() => {
                     handleChange('step0Type', 'formal');
-                    console.log(data?.step0Type);
                   }}
                 >
                   <Box
@@ -240,7 +254,81 @@ export default function EventStepper() {
           </>
         );
       case 1:
-        return <Typography>Formulário do passo 2</Typography>;
+        return (
+          <>
+            <Grid size={{ lg: 12, sm: 6, xs: 12 }} sx={{ display: 'flex', justifyContent: 'center' }}>
+              <FormControl fullWidth margin="normal">
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  onChange={(e) => handleChange('step1Decision', e.target.value)} // Quando o valor mudar, o handleChange será chamado
+                  sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+                >
+                  <FormControlLabel value="decided" control={<Radio />} label="Tenho certeza da data" />
+                  <FormControlLabel value="undecided" control={<Radio />} label="Quero deixar para uma futura votação" />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            {data.step1Decision == 'decided' && (
+              <Fade in={data?.step1Decision == 'decided'} timeout={1000} unmountOnExit>
+                <Grid size={{ lg: 6, sm: 6, xs: 12 }}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <FormControl fullWidth margin="normal">
+                      <DateTimePicker
+                        label="Data do Evento"
+                        closeOnSelect
+                        format="DD/MM/YYYY HH:mm"
+                        ampm={false}
+                        value={data?.step1Date ? dayjs(data.step1Date) : null}
+                        onChange={(value) => handleChange('step1Date', value?.toISOString() || '')}
+                      />
+
+                    </FormControl>
+                  </LocalizationProvider>
+                </Grid>
+              </Fade>
+            )}
+            {data?.step1Decision == 'undecided' && (
+              <>
+                <Fade in={data?.step1Decision == 'undecided'} timeout={1000} unmountOnExit>
+                  <Grid size={{ lg: 4, sm: 6, xs: 12 }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <FormControl fullWidth margin="normal">
+                        <DateTimePicker
+                          label="Intervalo 1 de data"
+                          closeOnSelect
+                          format="DD/MM/YYYY HH:mm"
+                          ampm={false}
+                          value={data?.step1UndecidedDate1 ? dayjs(data.step1UndecidedDate1) : null}
+                          onChange={(value) => handleChange('step1UndecidedDate1', value?.toISOString() || '')}
+                        />
+
+                      </FormControl>
+                    </LocalizationProvider>
+                  </Grid>
+                </Fade>
+                <Fade in={data?.step1Decision == 'undecided'} timeout={1000} unmountOnExit>
+                  <Grid size={{ lg: 4, sm: 6, xs: 12 }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <FormControl fullWidth margin="normal">
+                        <DateTimePicker
+                          label="Intervalo 2 de data"
+                          closeOnSelect
+                          format="DD/MM/YYYY HH:mm"
+                          ampm={false}
+                          value={data?.step1UndecidedDate2 ? dayjs(data.step1UndecidedDate1) : null}
+                          onChange={(value) => handleChange('step1UndecidedDate2', value?.toISOString() || '')}
+                        />
+
+                      </FormControl>
+                    </LocalizationProvider>
+                  </Grid>
+                </Fade>                               
+              </>
+            )}
+          </>
+        );
       case 2:
       case 3:
       case 4:
@@ -314,7 +402,7 @@ export default function EventStepper() {
 
             {/* Form Content */}
             <Grid size={{ xs: 12, lg: 12 }} sx={{ height: '75%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Box sx={{ width: '100%', height: 'auto' }}>
+              <Box sx={{ width: '100%' }}>
                 {mountContent && (
                   <Fade in={contentVisible && stepTextDone}
                     timeout={700}
@@ -351,9 +439,11 @@ export default function EventStepper() {
                   <Step key={label} completed={completedSteps[index] || false}>
                     <StepButton
                       onClick={() => {
-                        if (index !== activeStep) {
-                          setContentVisible(false);
-                          setPendingStep(index);
+                        if (stepTextDone) {
+                          if (index !== activeStep) {
+                            setContentVisible(false);
+                            setPendingStep(index);
+                          }
                         }
                       }}
                       disabled={index > activeStep + 1}
