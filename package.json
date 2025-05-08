@@ -16,6 +16,8 @@
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@mui/system": "^7.0.2",
+    "@mui/x-date-pickers": "^8.2.0",
+    "dayjs": "^1.11.13",
     "dompurify": "^3.2.5",
     "dotenv": "^16.5.0",
     "framer-motion": "^12.7.4",
