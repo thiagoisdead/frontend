@@ -63,7 +63,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nickname: sanitizedData.nickname, name: sanitizedData.name, email: sanitizedData.email, password: sanitizedData.password, captchaToken: captchaToken })
+        body: JSON.stringify({ name: sanitizedData.name, email: sanitizedData.email, password: sanitizedData.password, nickname: sanitizedData.nickname, captchaToken: captchaToken })
       });
       if (res.ok) {
         const data = await res.json();  // Transforma a resposta em JSON
@@ -77,10 +77,10 @@ export default function Home() {
       }
       else {
         const errorData = await res.json();
-        console.log('Erro ao fazer registro:', errorData.message || "Erro desconhecido");
+        console.log(errorData)
+        console.log(res)
       }
       setLoading(false)
-      console.log(res)
     }
     if (registerOrLogin === 'login') {
       // const res = await fetch("http://localhost:3001/auth/login", {
@@ -101,6 +101,7 @@ export default function Home() {
           console.log("Erro ao receber o token:", data.message);
         }
       } else {
+        console.log(res)
         const errorData = await res.json();
         console.log("Erro ao fazer login:", errorData.message || "Erro desconhecido");
       }
