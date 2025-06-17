@@ -1,21 +1,7 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Fade,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Slide,
-  Step,
-  StepButton,
-  Stepper,
-  TextField,
-  Typography
-} from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Box, Button, Fade, FormControl, FormControlLabel, Radio, RadioGroup, Slide, Step, StepButton, Stepper, TextField, Typography } from '@mui/material';
+import { useEffect, useState, useRef } from 'react';
 import '@fontsource/special-gothic-expanded-one';
 
 import '../../styles/events.css';
@@ -29,8 +15,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import StepText from '@/components/createEvent/createEventTexts';
 
 import { DateTimePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
+import { GoogleMap, Marker, useJsApiLoader, Autocomplete  } from "@react-google-maps/api";
 
+import dayjs from 'dayjs';
 
 const steps = [
   'Nome e Tipo',
@@ -42,6 +29,12 @@ const steps = [
   'Finalização',
 ];
 
+
+const defaultCenter = {
+  lat: -23.55052,
+  lng: -46.633308,
+};
+
 const stepsTexts = [
   "Vamos dar vida ao seu evento! Primeiro, crie um nome marcante, e depois defina o tipo, assim podemos falar exatamente na sua vibe 😉",
   "Perfeito! Agora, defina datas e horários, e nos dê uma descrição do evento.",
@@ -52,7 +45,18 @@ const stepsTexts = [
   "Sétimo parabéns!",
 ];
 
+
 export default function EventStepper() {
+
+  const googleApiKey: string = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_URL || "";
+
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: googleApiKey,
+    libraries: ['places'],
+  });
+
+
+
   const [activeStep, setActiveStep] = useState(0);
   const [pendingStep, setPendingStep] = useState<number | null>(null);
   const [showBox, setShowBox] = useState(false);
@@ -65,17 +69,45 @@ export default function EventStepper() {
   const [data, setData] = useState({
     step0Name: '',
     step0Type: '',
-    step1Date: '',
+    step1DecidedDate: '',
     step1Decision: '',
     step1UndecidedDate1: '',
     step1UndecidedDate2: '',
-    // step1Date: '',
-    // step1Description: '',
+    step1Description: '',
   });
   const router = useRouter();
   const authenticated = useAuthenticated();
+  const dateFields = [
+    { label: 'De...', key: 'step1UndecidedDate1' },
+    { label: 'Até...', key: 'step1UndecidedDate2' },
+  ];
+
+
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const [markerPosition, setMarkerPosition] = useState(defaultCenter);
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const onLoadAutocomplete = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const onPlaceChanged = () => {
+    if (autocompleteRef.current !== null) {
+      const place = autocompleteRef.current.getPlace();
+      if (place.geometry && place.geometry.location) {
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+        setMapCenter({ lat, lng });
+        setMarkerPosition({ lat, lng });
+      }
+    }
+  };
+
 
   useEffect(() => {
+
     const t = setTimeout(() => {
       setShowBox(true);
       setShowImage(true);
@@ -103,9 +135,6 @@ export default function EventStepper() {
     if (data.step0Name.trim() && data.step0Type.trim()) {
       newCompleted[0] = true;
     }
-
-    console.log(data)
-
     // if (data.step1Date?.trim() && data.step1Description?.trim()) {
     //   newCompleted[1] = true;
     // }
@@ -121,6 +150,9 @@ export default function EventStepper() {
   const handleChange = (key: string, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
+
+  if (loadError) return <div>Erro ao carregar o mapa</div>;
+  if (!isLoaded) return <div>Carregando mapa...</div>;
 
   const renderStepContent = (step: number) => {
     switch (step) {
@@ -153,7 +185,6 @@ export default function EventStepper() {
               display="flex"
               justifyContent="center"
               alignItems="flex-end"
-              // bgcolor="yellow"
               sx={{ width: 200, height: 200 }}
 
             >
@@ -205,7 +236,6 @@ export default function EventStepper() {
               display="flex"
               justifyContent="center"
               alignItems="flex-end"
-              // bgcolor="yellow"
               sx={{ width: 200, height: 200 }}
             >
               <Fade in={!!data?.step0Name} timeout={500} unmountOnExit>
@@ -247,7 +277,6 @@ export default function EventStepper() {
                   >
                     <Image src={'/images/formalParty.svg'} alt="beer" width={300} height={200} typeof="svg" draggable={false} />
                   </Box>
-
                 </Button>
               </Fade>
             </Grid>
@@ -256,80 +285,122 @@ export default function EventStepper() {
       case 1:
         return (
           <>
-            <Grid size={{ lg: 12, sm: 6, xs: 12 }} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid size={{ lg: 12, sm: 6, xs: 12 }} sx={{ display: 'flex', justifyContent: 'center', height: '5rem' }}>
               <FormControl fullWidth margin="normal">
                 <RadioGroup
                   row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
-                  onChange={(e) => handleChange('step1Decision', e.target.value)} // Quando o valor mudar, o handleChange será chamado
-                  sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+                  onChange={(e) => handleChange('step1Decision', e.target.value)}
+                  sx={{ display: 'flex', justifyContent: 'center' }}
                 >
                   <FormControlLabel value="decided" control={<Radio />} label="Tenho certeza da data" />
                   <FormControlLabel value="undecided" control={<Radio />} label="Quero deixar para uma futura votação" />
                 </RadioGroup>
               </FormControl>
             </Grid>
-            {data.step1Decision == 'decided' && (
-              <Fade in={data?.step1Decision == 'decided'} timeout={1000} unmountOnExit>
-                <Grid size={{ lg: 6, sm: 6, xs: 12 }}>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <FormControl fullWidth margin="normal">
-                      <DateTimePicker
-                        label="Data do Evento"
-                        closeOnSelect
-                        format="DD/MM/YYYY HH:mm"
-                        ampm={false}
-                        value={data?.step1Date ? dayjs(data.step1Date) : null}
-                        onChange={(value) => handleChange('step1Date', value?.toISOString() || '')}
-                      />
-
-                    </FormControl>
-                  </LocalizationProvider>
-                </Grid>
-              </Fade>
-            )}
-            {data?.step1Decision == 'undecided' && (
+            <Grid container spacing={2} sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
               <>
-                <Fade in={data?.step1Decision == 'undecided'} timeout={1000} unmountOnExit>
-                  <Grid size={{ lg: 4, sm: 6, xs: 12 }}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <FormControl fullWidth margin="normal">
-                        <DateTimePicker
-                          label="Intervalo 1 de data"
-                          closeOnSelect
-                          format="DD/MM/YYYY HH:mm"
-                          ampm={false}
-                          value={data?.step1UndecidedDate1 ? dayjs(data.step1UndecidedDate1) : null}
-                          onChange={(value) => handleChange('step1UndecidedDate1', value?.toISOString() || '')}
-                        />
-
-                      </FormControl>
-                    </LocalizationProvider>
-                  </Grid>
-                </Fade>
-                <Fade in={data?.step1Decision == 'undecided'} timeout={1000} unmountOnExit>
-                  <Grid size={{ lg: 4, sm: 6, xs: 12 }}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <FormControl fullWidth margin="normal">
-                        <DateTimePicker
-                          label="Intervalo 2 de data"
-                          closeOnSelect
-                          format="DD/MM/YYYY HH:mm"
-                          ampm={false}
-                          value={data?.step1UndecidedDate2 ? dayjs(data.step1UndecidedDate1) : null}
-                          onChange={(value) => handleChange('step1UndecidedDate2', value?.toISOString() || '')}
-                        />
-
-                      </FormControl>
-                    </LocalizationProvider>
-                  </Grid>
-                </Fade>                               
+                {data.step1Decision == 'decided' && (
+                  <Fade in={data?.step1Decision == 'decided'} timeout={1000} unmountOnExit>
+                    <Grid size={{ lg: 8, sm: 6, xs: 12 }} sx={{ mb: 4 }}>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <FormControl fullWidth margin="normal">
+                          <DateTimePicker
+                            label="Data do Evento"
+                            closeOnSelect
+                            format="DD/MM/YYYY HH:mm"
+                            ampm={false}
+                            value={data?.step1DecidedDate ? dayjs(data.step1DecidedDate) : null}
+                            onChange={(value) => handleChange('step1DecidedDate', value?.toISOString() || '')}
+                          />
+                        </FormControl>
+                      </LocalizationProvider>
+                    </Grid>
+                  </Fade>
+                )}
+                {data?.step1Decision == 'undecided' && (
+                  <>
+                    {dateFields.map(({ label, key }) => (
+                      <Fade key={key} in={data?.step1Decision === 'undecided'} timeout={1000} unmountOnExit>
+                        <Grid size={{ lg: 4, sm: 6, xs: 12 }} sx={{ mb: 4 }}>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <FormControl fullWidth margin="normal">
+                              <DateTimePicker
+                                label={label}
+                                closeOnSelect
+                                format="DD/MM/YYYY HH:mm"
+                                ampm={false}
+                                minDateTime={key === 'step1UndecidedDate2' && data?.step1UndecidedDate1
+                                  ? dayjs(data.step1UndecidedDate1).add(1, 'minute')
+                                  : undefined}
+                                value={data?.[key as keyof typeof data] ? dayjs(data[key as keyof typeof data]) : null}
+                                onChange={(value) => handleChange(key, value?.toISOString() || '')}
+                              />
+                            </FormControl>
+                          </LocalizationProvider>
+                        </Grid>
+                      </Fade>
+                    ))}
+                  </>
+                )}
+                <Grid size={{ lg: 8, sm: 6, xs: 12 }} sx={{ mb: 4 }}>
+                  <FormControl fullWidth margin="normal">
+                    <TextField
+                      fullWidth
+                      multiline
+                      minRows={4}
+                      label="Descrição do evento"
+                      value={data?.step1Description}
+                      onChange={(e) => handleChange('step1Description', e.target.value)}
+                    />
+                  </FormControl>
+                </Grid>
               </>
-            )}
+            </Grid >
           </>
         );
       case 2:
+        return (
+          <>
+
+
+            <Autocomplete
+              onLoad={onLoadAutocomplete}
+              onPlaceChanged={onPlaceChanged}
+            >
+              <input
+                type="text"
+                placeholder="Digite o endereço aqui"
+                style={{
+                  boxSizing: 'border-box',
+                  border: '1px solid transparent',
+                  width: '300px',
+                  height: '40px',
+                  padding: '0 12px',
+                  borderRadius: '4px',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                  fontSize: '16px',
+                  position: 'absolute',
+                  top: '10px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  zIndex: 10,
+                }}
+                ref={inputRef}
+              />
+            </Autocomplete>
+            <Box sx={{ width: '100%', height: 400, borderRadius: 2, overflow: 'hidden' }}>
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%', borderRadius: 8 }}
+                center={defaultCenter}
+                zoom={12}
+              >
+                <Marker position={defaultCenter} />
+              </GoogleMap>
+            </Box>
+          </>
+        )
+
       case 3:
       case 4:
       case 5:
@@ -377,12 +448,11 @@ export default function EventStepper() {
             flexDirection: 'column',
             // boxSizing: 'border-box',
             p: 2,
-            justifyContent: 'space-between',
           }}
         >
           <Grid
             container
-            sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+            sx={{ flex: 1, display: 'flex' }}
           >
             {/* Animated Step Text */}
             <Grid size={{ xs: 12, lg: 12 }} sx={{ height: '15%', display: 'flex', justifyContent: 'center' }}>
@@ -420,9 +490,9 @@ export default function EventStepper() {
                     }}
                   >
                     <Box sx={{ width: '100%' }}>
-                      <Grid container spacing={2} display={'flex'}
-                        // bgcolor={'cyan'}
-                        alignContent={'center, space-beteween'} justifyContent={'center'} sx={{ height: '25rem' }} mb={'2rem'}>
+                      <Grid container spacing={2}
+                        sx={{ minHeight: '25rem', display: 'flex', justifyContent: 'center', mb: 5 }}
+                      >
 
                         {renderStepContent(activeStep)}
                       </Grid>
