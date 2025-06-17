@@ -17,6 +17,7 @@
     "@mui/material": "^7.0.2",
     "@mui/system": "^7.0.2",
     "@mui/x-date-pickers": "^8.2.0",
+    "@react-google-maps/api": "^2.20.6",
     "dayjs": "^1.11.13",
     "dompurify": "^3.2.5",
     "dotenv": "^16.5.0",
