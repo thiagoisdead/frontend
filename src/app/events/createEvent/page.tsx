@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Button, Fade, FormControl, FormControlLabel, Radio, RadioGroup, Slide, Step, StepButton, Stepper, TextField, Typography } from '@mui/material';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import '@fontsource/special-gothic-expanded-one';
 
 import '../../styles/events.css';
@@ -15,7 +15,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import StepText from '@/components/createEvent/createEventTexts';
 
 import { DateTimePicker } from '@mui/x-date-pickers';
-import { GoogleMap, Marker, useJsApiLoader, Autocomplete  } from "@react-google-maps/api";
 
 import dayjs from 'dayjs';
 
@@ -30,15 +29,10 @@ const steps = [
 ];
 
 
-const defaultCenter = {
-  lat: -23.55052,
-  lng: -46.633308,
-};
-
 const stepsTexts = [
   "Vamos dar vida ao seu evento! Primeiro, crie um nome marcante, e depois defina o tipo, assim podemos falar exatamente na sua vibe 😉",
   "Perfeito! Agora, defina datas e horários, e nos dê uma descrição do evento.",
-  "Terceiro com emoção",
+  "Agora, quantidade de pessoas e a localização.",
   "Quarto super importante",
   "Quinto quase lá",
   "Sexto penúltimo!",
@@ -47,15 +41,6 @@ const stepsTexts = [
 
 
 export default function EventStepper() {
-
-  const googleApiKey: string = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_URL || "";
-
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: googleApiKey,
-    libraries: ['places'],
-  });
-
-
 
   const [activeStep, setActiveStep] = useState(0);
   const [pendingStep, setPendingStep] = useState<number | null>(null);
@@ -82,28 +67,6 @@ export default function EventStepper() {
     { label: 'Até...', key: 'step1UndecidedDate2' },
   ];
 
-
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
-  const [markerPosition, setMarkerPosition] = useState(defaultCenter);
-
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const onLoadAutocomplete = (autocomplete: google.maps.places.Autocomplete) => {
-    autocompleteRef.current = autocomplete;
-  };
-
-  const onPlaceChanged = () => {
-    if (autocompleteRef.current !== null) {
-      const place = autocompleteRef.current.getPlace();
-      if (place.geometry && place.geometry.location) {
-        const lat = place.geometry.location.lat();
-        const lng = place.geometry.location.lng();
-        setMapCenter({ lat, lng });
-        setMarkerPosition({ lat, lng });
-      }
-    }
-  };
 
 
   useEffect(() => {
@@ -150,9 +113,6 @@ export default function EventStepper() {
   const handleChange = (key: string, value: string) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
-
-  if (loadError) return <div>Erro ao carregar o mapa</div>;
-  if (!isLoaded) return <div>Carregando mapa...</div>;
 
   const renderStepContent = (step: number) => {
     switch (step) {
@@ -362,42 +322,9 @@ export default function EventStepper() {
       case 2:
         return (
           <>
+            <Grid size={{ lg: 12, sm: 6, xs: 12 }}>
 
-
-            <Autocomplete
-              onLoad={onLoadAutocomplete}
-              onPlaceChanged={onPlaceChanged}
-            >
-              <input
-                type="text"
-                placeholder="Digite o endereço aqui"
-                style={{
-                  boxSizing: 'border-box',
-                  border: '1px solid transparent',
-                  width: '300px',
-                  height: '40px',
-                  padding: '0 12px',
-                  borderRadius: '4px',
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                  fontSize: '16px',
-                  position: 'absolute',
-                  top: '10px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  zIndex: 10,
-                }}
-                ref={inputRef}
-              />
-            </Autocomplete>
-            <Box sx={{ width: '100%', height: 400, borderRadius: 2, overflow: 'hidden' }}>
-              <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '100%', borderRadius: 8 }}
-                center={defaultCenter}
-                zoom={12}
-              >
-                <Marker position={defaultCenter} />
-              </GoogleMap>
-            </Box>
+            </Grid>
           </>
         )
 
